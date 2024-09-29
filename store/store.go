@@ -1,6 +1,7 @@
 package store
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -14,7 +15,7 @@ type Store struct {
 	mu         sync.Mutex
 	repo       *repo.Repo
 	lastSynced time.Time
-	clients    map[chan string]bool
+	clients    sync.Map
 	broadcast  chan string
 }
 
@@ -33,7 +34,6 @@ func New() (*Store, error) {
 			RecentPolls: make([]string, 0),
 		},
 		repo:      r,
-		clients:   make(map[chan string]bool),
 		broadcast: make(chan string),
 	}
 
@@ -122,20 +122,28 @@ func (s *Store) BootStrap() {
 }
 
 func (s *Store) RegisterClient(client chan string) {
-	s.clients[client] = true
+	s.clients.Store(client, true)
 }
 
 func (s *Store) UnRegisterClient(client chan string) {
-	delete(s.clients, client)
+	s.clients.Delete(client)
 	close(client)
 }
 
 func (s *Store) HandleBroadcast() {
 	for {
 		data := <-s.broadcast
-		for client := range s.clients {
-			client <- data
-		}
+		s.clients.Range(func(key, value any) bool {
+			client, ok := key.(chan string)
+			if ok {
+				select {
+				case client <- data:
+				default:
+					fmt.Println("Channel is blocked or full")
+				}
+			}
+			return true // Continue ranging through all items
+		})
 	}
 }
 

@@ -3,7 +3,6 @@ package handlers
 import (
 	"bytes"
 	"encoding/base64"
-	"fmt"
 	"html/template"
 	"log"
 
@@ -16,7 +15,6 @@ func (h *Handler) HandleVote(e echo.Context) error {
 	if err := e.Bind(&v); err != nil {
 		return err
 	}
-	fmt.Println(v)
 
 	vote := v["type"]
 
