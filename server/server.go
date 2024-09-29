@@ -43,9 +43,6 @@ func (s *Server) RegisterRoutes() {
 
 func (s *Server) Start() {
 	listenAddr := os.Getenv("LISTEN_ADDR")
-	listenAddr = ":3000"
 	slog.Info("Server Started", "ListenAddress", listenAddr)
 	s.e.Logger.Fatal(s.e.Start(listenAddr))
 }
-
-
