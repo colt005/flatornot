@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,21 +9,37 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes slideDown {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
+
         .slide-down {
             animation: slideDown 0.5s ease-out forwards;
         }
+
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
+
         .fade-in {
             animation: fadeIn 0.5s ease-out forwards;
         }
     </style>
 </head>
+
 <body class="bg-gradient-to-b from-blue-400 to-purple-600 min-h-screen flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-2xl p-8 max-w-2xl w-full">
         <h1 class="text-4xl font-bold text-center mb-6">Is Earth Flat or Round? 🤔</h1>
@@ -39,37 +56,60 @@
             </button>
         </div>
 
-        <div id="poll-results" >
+        <div id="poll-results">
             {{template "poll-results" .}}
         </div>
 
         <div class="mt-8 text-center text-sm text-gray-500">
-            Disclaimer: This poll is about as scientific as using a pizza cutter to measure the Earth's curvature. Please don't base your geography lessons on it!
+            Disclaimer: This poll is about as scientific as using a pizza cutter to measure the Earth's curvature.
+            Please don't base your geography lessons on it!
         </div>
     </div>
 
     <script>
         function decodeBase64(base64String) {
-  // Decode the Base64 string into a byte array (Uint8Array)
-  const binaryString = atob(base64String);
-  const bytes = new Uint8Array(binaryString.length);
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
+            // Decode the Base64 string into a byte array (Uint8Array)
+            const binaryString = atob(base64String);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
 
-  // Convert the byte array back into a string using TextDecoder
-  const decoder = new TextDecoder('utf-8');
-  return decoder.decode(bytes);
-}
+            // Convert the byte array back into a string using TextDecoder
+            const decoder = new TextDecoder('utf-8');
+            return decoder.decode(bytes);
+        }
         document.addEventListener('DOMContentLoaded', (event) => {
-            const eventSource = new EventSource('/events');
+
+            let sessionId = localStorage.getItem('flatEarthSessionId');
+            if (!sessionId) {
+                sessionId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+                localStorage.setItem('flatEarthSessionId', sessionId);
+            }
+
+            htmx.on('htmx:configRequest', (event) => {
+                event.detail.headers['X-Session-ID'] = sessionId;
+            });
+
+
+
+            const eventSource = new EventSource(`/events?sessionId=${sessionId}`);
             const pollResults = document.getElementById('poll-results');
 
-            eventSource.onmessage = function(event) {
-              pollResults.innerHTML = decodeBase64(event.data)
+            eventSource.onmessage = function (event) {
+                
+                pollResults.innerHTML = decodeBase64(event.data)
             };
+
         });
+
+        
+
     </script>
+
 
     {{define "poll-results"}}
     <div class="mb-8">
@@ -80,7 +120,8 @@
                 <span>{{printf "%.1f" (percentage .FlatVotes .TotalVotes)}}%</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-4">
-                <div class="bg-yellow-400 h-4 rounded-full transition-all duration-500 ease-out" style="width: {{percentage .FlatVotes .TotalVotes}}%"></div>
+                <div class="bg-yellow-400 h-4 rounded-full transition-all duration-500 ease-out"
+                    style="width: {{percentage .FlatVotes .TotalVotes}}%"></div>
             </div>
         </div>
         <div>
@@ -89,7 +130,8 @@
                 <span>{{printf "%.1f" (percentage .RoundVotes .TotalVotes)}}%</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-4">
-                <div class="bg-blue-500 h-4 rounded-full transition-all duration-500 ease-out" style="width: {{percentage .RoundVotes .TotalVotes}}%"></div>
+                <div class="bg-blue-500 h-4 rounded-full transition-all duration-500 ease-out"
+                    style="width: {{percentage .RoundVotes .TotalVotes}}%"></div>
             </div>
         </div>
     </div>
@@ -100,6 +142,12 @@
         <p class="text-lg italic">{{.LatestPun}}</p>
     </div>
     {{end}}
+
+    <div id="latest-pun-session" class="mb-8 p-4 bg-green-100 rounded-lg fade-in hidden">
+        <h2 class="text-xl font-bold mb-2">🎭 Congratulations! Your vote is counted! 🎭</h2>
+        <p class="text-lg italic">{{.LatestPun}}</p>
+    </div>
+
 
     <div class="mb-8">
         <h2 class="text-2xl font-bold mb-4">Recent Earth-Shattering Votes:</h2>
@@ -118,4 +166,5 @@
     </div>
     {{end}}
 </body>
+
 </html>

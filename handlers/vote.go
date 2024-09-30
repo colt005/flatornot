@@ -5,12 +5,14 @@ import (
 	"encoding/base64"
 	"html/template"
 	"log"
+	"net/http"
 
 	"github.com/colt005/flatornot/common"
 	"github.com/labstack/echo/v4"
 )
 
 func (h *Handler) HandleVote(e echo.Context) error {
+
 	v := make(map[string]string)
 	if err := e.Bind(&v); err != nil {
 		return err
@@ -39,9 +41,16 @@ func (h *Handler) HandleVote(e echo.Context) error {
 
 	sEnc := base64.StdEncoding.EncodeToString(buf.Bytes())
 
-	h.service.BroadcastVotes(sEnc)
+	sessionID := e.Request().Header.Get("X-Session-Id")
+
+	h.service.BroadcastVotes(sEnc, sessionID)
 
 	pollData.LatestPun = common.P.Random(vote)
+
+	e.SetCookie(&http.Cookie{
+		Name:  "isVoted",
+		Value: "true",
+	})
 
 	tmpl.ExecuteTemplate(e.Response().Writer, "poll-results", pollData)
 

@@ -16,7 +16,7 @@ type Store struct {
 	repo       *repo.Repo
 	lastSynced time.Time
 	clients    sync.Map
-	broadcast  chan string
+	broadcast  chan models.BroadCastMessage
 }
 
 func New() (*Store, error) {
@@ -34,7 +34,7 @@ func New() (*Store, error) {
 			RecentPolls: make([]string, 0),
 		},
 		repo:      r,
-		broadcast: make(chan string),
+		broadcast: make(chan models.BroadCastMessage),
 	}
 
 	s.BootStrap()
@@ -121,8 +121,8 @@ func (s *Store) BootStrap() {
 
 }
 
-func (s *Store) RegisterClient(client chan string) {
-	s.clients.Store(client, true)
+func (s *Store) RegisterClient(client chan string, sessionID string) {
+	s.clients.Store(client, sessionID)
 }
 
 func (s *Store) UnRegisterClient(client chan string) {
@@ -135,9 +135,10 @@ func (s *Store) HandleBroadcast() {
 		data := <-s.broadcast
 		s.clients.Range(func(key, value any) bool {
 			client, ok := key.(chan string)
-			if ok {
+			sessionID, _ := value.(string)
+			if sessionID != data.ClientID && ok {
 				select {
-				case client <- data:
+				case client <- data.Message:
 				default:
 					fmt.Println("Channel is blocked or full")
 				}
@@ -147,6 +148,9 @@ func (s *Store) HandleBroadcast() {
 	}
 }
 
-func (s *Store) BroadcastVotes(html string) {
-	s.broadcast <- html
+func (s *Store) BroadcastVotes(html string, clientID string) {
+	s.broadcast <- models.BroadCastMessage{
+		Message:  html,
+		ClientID: clientID,
+	}
 }

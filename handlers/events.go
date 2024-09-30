@@ -13,7 +13,9 @@ func (h *Handler) HandleSSE(e echo.Context) error {
 
 	client := make(chan string)
 
-	h.service.RegisterClient(client)
+	sessionID := e.QueryParam("sessionId")
+
+	h.service.RegisterClient(client,sessionID)
 
 	defer func() {
 		h.service.UnRegisterClient(client)
