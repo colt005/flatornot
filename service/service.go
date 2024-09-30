@@ -4,6 +4,8 @@ import (
 	"log/slog"
 	"time"
 
+	_ "time/tzdata"
+
 	"github.com/colt005/flatornot/constants"
 	"github.com/colt005/flatornot/models"
 	"github.com/colt005/flatornot/store"
