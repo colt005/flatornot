@@ -17,10 +17,11 @@ func (h *Handler) HandleVote(e echo.Context) error {
 	if err := e.Bind(&v); err != nil {
 		return err
 	}
+	sessionID := e.Request().Header.Get("X-Session-Id")
 
 	vote := v["type"]
 
-	h.service.AddVote(vote)
+	h.service.AddVote(vote, sessionID, nil)
 
 	tmpl, err := template.New("poll-results").Funcs(template.FuncMap{
 		"percentage": common.CalculatePercentage,
@@ -40,8 +41,6 @@ func (h *Handler) HandleVote(e echo.Context) error {
 	}
 
 	sEnc := base64.StdEncoding.EncodeToString(buf.Bytes())
-
-	sessionID := e.Request().Header.Get("X-Session-Id")
 
 	h.service.BroadcastVotes(sEnc, sessionID)
 

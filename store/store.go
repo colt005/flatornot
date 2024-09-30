@@ -2,6 +2,7 @@ package store
 
 import (
 	"fmt"
+	"log/slog"
 	"sync"
 	"time"
 
@@ -11,12 +12,14 @@ import (
 )
 
 type Store struct {
-	pollData   models.PollData
-	mu         sync.Mutex
-	repo       *repo.Repo
-	lastSynced time.Time
-	clients    sync.Map
-	broadcast  chan models.BroadCastMessage
+	pollData     models.PollData
+	mu           sync.Mutex
+	repo         *repo.Repo
+	lastSynced   time.Time
+	clients      sync.Map
+	broadcast    chan models.BroadCastMessage
+	backlog      []models.VoteRow
+	backlogMutex sync.RWMutex
 }
 
 func New() (*Store, error) {
@@ -33,6 +36,7 @@ func New() (*Store, error) {
 			TotalVotes:  0,
 			RecentPolls: make([]string, 0),
 		},
+		backlog:   make([]models.VoteRow, 0),
 		repo:      r,
 		broadcast: make(chan models.BroadCastMessage),
 	}
@@ -40,6 +44,38 @@ func New() (*Store, error) {
 	s.BootStrap()
 
 	return s, nil
+}
+
+func (s *Store) SyncBacklog() error {
+	// get the lock
+	s.backlogMutex.Lock()
+	defer s.backlogMutex.Unlock()
+	// get the elements
+	rows := s.backlog
+	//insert to DB
+	err := s.repo.CreateVoteRows(rows)
+	if err != nil {
+		slog.Error("Failed to create rows", "error ", err)
+		return err
+	}
+	//clear list
+	s.backlog = nil
+	
+	return nil
+}
+
+func (s *Store) AddVoteToBacklog(v models.VoteRow) {
+	s.backlogMutex.Lock()
+	defer s.backlogMutex.Unlock()
+
+	s.backlog = append(s.backlog, v)
+}
+
+func (s *Store) GetBacklog() []models.VoteRow {
+	s.backlogMutex.RLock()
+	defer s.backlogMutex.RUnlock()
+	res := s.backlog
+	return res
 }
 
 func (s *Store) GetPollData() models.PollData {

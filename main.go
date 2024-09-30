@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -28,7 +29,10 @@ func main() {
 	<-quit
 	fmt.Println("Shutting down server...")
 
-	//TODO: Flush backlog to DB
+	err = s.SyncBacklog()
+	if err != nil {
+		slog.Error("syncBacklog Failed", "err", err)
+	}
 
 	// Graceful shutdown
 	s.ShutDown()

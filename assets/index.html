@@ -47,11 +47,11 @@
 
         <div class="flex justify-center space-x-4 mb-8">
             <button hx-post="/vote" hx-vals='{"type": "Flat"}' hx-target="#poll-results" hx-swap="innerHTML"
-                class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-4 px-8 rounded-full transform hover:rotate-180 transition-transform duration-500 flex items-center">
+                class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-4 px-8 rounded-full transform transition-transform duration-500 flex items-center">
                 <span class="mr-2 text-4xl">🥞</span> Flat as a Pancake!
             </button>
             <button hx-post="/vote" hx-vals='{"type": "Round"}' hx-target="#poll-results" hx-swap="innerHTML"
-                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-full hover:animate-spin flex items-center">
+                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-full flex items-center">
                 <span class="mr-2 text-4xl">🌍</span> Round and Proud!
             </button>
         </div>
