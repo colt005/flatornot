@@ -25,7 +25,10 @@
 <!-- ABOUT THE PROJECT -->
 # About The Project
 
-[![Product Name Screen Shot][./assets/screenshot.png]](https://flatornot.xyz)
+ <a href="https://flatornot.xyz">
+    <img src="assets/screenshot.png" alt="Screenshot" >
+</a>
+
 
 ## FlatOrNot - The Great Debate
 
