@@ -37,7 +37,11 @@ func (s *Service) AddVote(v string, sessionID string, metadata map[string]interf
 }
 
 func (s *Service) AddVoteToBacklog(vote models.VoteType, sessionID string, metadata map[string]interface{}) {
-	loc, _ := time.LoadLocation("Asia/Kolkata")
+	loc, err := time.LoadLocation("Asia/Kolkata")
+	if err != nil {
+		slog.Error("failed to load location", "err", err)
+		return
+	}
 	now := time.Now().In(loc)
 
 	if len(s.store.GetBacklog()) > constants.BACKLOG_THRESHOLD {
