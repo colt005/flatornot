@@ -51,3 +51,14 @@ func (r *Repo) GetRecent5Votes() ([]models.VoteRow, error) {
 	return results, nil
 
 }
+
+func (r *Repo) CreateVoteRows(rows []models.VoteRow) error {
+
+	err := r.db.Table(`votes`).Save(&rows).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}

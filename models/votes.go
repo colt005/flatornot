@@ -1,12 +1,16 @@
 package models
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"time"
+)
 
 type VoteRow struct {
-	ID        int64           `json:"id"`
+	ID        *int64          `json:"id"`
 	Vote      VoteType        `json:"vote"`
 	Metadata  json.RawMessage `json:"metadata"`
-	CreatedAt string          `json:"created_at"`
+	CreatedAt *time.Time      `json:"created_at"`
+	SessionID string          `json:"session_id"`
 }
 
 type Metadata struct {

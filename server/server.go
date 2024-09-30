@@ -14,8 +14,9 @@ import (
 )
 
 type Server struct {
-	handler *handlers.Handler
-	e       *echo.Echo
+	handler      *handlers.Handler
+	e            *echo.Echo
+	syncFunction func() error
 }
 
 func New() (*Server, error) {
@@ -27,6 +28,11 @@ func New() (*Server, error) {
 	ser := &Server{
 		handler: h,
 		e:       echo.New(),
+	}
+
+	ser.syncFunction = func() error {
+		err := s.SyncBacklog()
+		return err
 	}
 
 	//ser.e.Use(middleware.Logger())
@@ -47,7 +53,7 @@ func (s *Server) RegisterRoutes() {
 func (s *Server) Start() {
 	listenAddr := os.Getenv("LISTEN_ADDR")
 	slog.Info("Server Started", "ListenAddress", listenAddr)
-	s.e.Logger.Fatal(s.e.Start(listenAddr))
+	s.e.Start(listenAddr)
 }
 
 func (s *Server) ShutDown() {
@@ -58,4 +64,8 @@ func (s *Server) ShutDown() {
 	if err := s.e.Shutdown(ctx); err != nil {
 		log.Fatalf("Server forced to shutdown: %v", err)
 	}
+}
+
+func (s *Server) SyncBacklog() error {
+	return s.syncFunction()
 }
