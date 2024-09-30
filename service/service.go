@@ -31,8 +31,8 @@ func (s *Service) AddVote(v string) error {
 	return s.store.Incr(vote)
 }
 
-func (s *Service) RegisterClient(client chan string) {
-	s.store.RegisterClient(client)
+func (s *Service) RegisterClient(client chan string, sessionID string) {
+	s.store.RegisterClient(client, sessionID)
 }
 
 func (s *Service) UnRegisterClient(client chan string) {
@@ -43,6 +43,6 @@ func (s *Service) HandleBroadcast() {
 	s.store.HandleBroadcast()
 }
 
-func (s *Service) BroadcastVotes(html string) {
-	s.store.BroadcastVotes(html)
+func (s *Service) BroadcastVotes(html string, clientID string) {
+	s.store.BroadcastVotes(html, clientID)
 }
