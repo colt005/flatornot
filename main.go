@@ -9,9 +9,12 @@ import (
 	"syscall"
 
 	"github.com/colt005/flatornot/server"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+
+	godotenv.Load()
 
 	s, err := server.New()
 	if err != nil {

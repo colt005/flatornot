@@ -3,6 +3,7 @@ module github.com/colt005/flatornot
 go 1.21.3
 
 require (
+	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.12.0
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.12
