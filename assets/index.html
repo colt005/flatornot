@@ -40,7 +40,7 @@
     </style>
 </head>
 
-<body class="bg-gradient-to-b from-blue-400 to-purple-600 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gradient-to-b from-blue-400 to-purple-600 min-h-screen flex flex-col items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-2xl p-8 max-w-2xl w-full">
         <h1 class="text-4xl font-bold text-center mb-6">Is Earth Flat or Round? 🤔</h1>
         <p class="text-center text-xl mb-8">Choose wisely, your pizza's shape depends on it!</p>
@@ -65,6 +65,7 @@
             Please don't base your geography lessons on it!
         </div>
     </div>
+
 
     <script>
         function decodeBase64(base64String) {
@@ -165,6 +166,14 @@
         Total Votes: {{.TotalVotes}} {{if ge .TotalVotes 9000}}(It's over 9000!){{else}}(Almost over 9000!){{end}}
     </div>
     {{end}}
+
+
+    <footer class="mt-8 text-center text-sm text-white">
+        Made with 🤍 by <a href="https://github.com/colt005/flatornot" target="_blank" rel="noopener noreferrer" class="underline hover:text-yellow-300 transition-colors duration-300">Rohan</a>
+        <p class="mt-2">Remember: In space, no one can hear you argue about Earth's shape!</p>
+
+    </footer>
+
 </body>
 
 </html>
