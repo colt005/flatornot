@@ -85,6 +85,18 @@ Also, I love exploring new stuff, and this project gave me the perfect excuse to
     go run main.go
     ```
 
+### Using Docker
+
+1. To start
+  ```sh
+  docker-compose up -d
+  ```
+2. To stop
+  ```sh
+  docker-compose down -v
+  ```
+
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
