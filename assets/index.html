@@ -38,6 +38,15 @@
             animation: fadeIn 0.5s ease-out forwards;
         }
     </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WTKTXEEMPC"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-WTKTXEEMPC');
+    </script>
 </head>
 
 <body class="bg-gradient-to-b from-blue-400 to-purple-600 min-h-screen flex flex-col items-center justify-center p-4">
@@ -84,7 +93,7 @@
 
             let sessionId = localStorage.getItem('flatEarthSessionId');
             if (!sessionId) {
-                sessionId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                sessionId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                     return v.toString(16);
                 });
@@ -101,13 +110,13 @@
             const pollResults = document.getElementById('poll-results');
 
             eventSource.onmessage = function (event) {
-                
+
                 pollResults.innerHTML = decodeBase64(event.data)
             };
 
         });
 
-        
+
 
     </script>
 
@@ -169,7 +178,8 @@
 
 
     <footer class="mt-8 text-center text-sm text-white">
-        Made with 🤍 by <a href="https://github.com/colt005/flatornot" target="_blank" rel="noopener noreferrer" class="underline hover:text-yellow-300 transition-colors duration-300">Rohan</a>
+        Made with 🤍 by <a href="https://github.com/colt005/flatornot" target="_blank" rel="noopener noreferrer"
+            class="underline hover:text-yellow-300 transition-colors duration-300">Rohan</a>
         <p class="mt-2">Remember: In space, no one can hear you argue about Earth's shape!</p>
 
     </footer>
